@@ -45,5 +45,42 @@ def patch_task(task_id):
     save_data()
     return jsonify(task)
 
+@app.route('/tasks/completed/true', methods=['GET'])
+def get_tasks_complet():
+    l = tasks
+    l1 = []
+    for i in l:
+        if (i['completed'] == True):
+            l1.append(i)
+    return jsonify(l1)
+
+@app.route('/tasks/categories/cat_id/tasks', methods=['GET'])
+def get_tasks_category(cat_id):
+    l = tasks
+    l1 = []
+    for i in l:
+        if (i['category_id'] == cat_id):
+            l1.append(i)
+    return jsonify(l1)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+def get_tasks():
+    return jsonify(tasks)
+
+# Actualización parcial de una tarea
+@app.route('/tasks/<int:task_id>', methods=['PATCH'])
+def patch_task(task_id):
+    task = next((task for task in tasks if task["id"] == task_id), None)
+    if task is None:
+        abort(404, description="Tarea no encontrada")
+    data = request.json
+    task.update({
+        key: data[key] for key in data if key in task
+    })
+    save_data()
+    return jsonify(task)
+
 if __name__ == '__main__':
     app.run(debug=True)
